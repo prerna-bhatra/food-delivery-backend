@@ -5,6 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./routes/auth.route');
+const user = require('./routes/user.route');
 const { sequelize } = require('./db');
 
 
@@ -15,6 +16,8 @@ app.use(bodyParser.json());
 app.use(cors())
 
 app.use('/auth', auth);
+app.use('/user', user);
+
 
 sequelize.sync({ force: false })
     .then(() => {

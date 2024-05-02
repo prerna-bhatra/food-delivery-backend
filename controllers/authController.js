@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password, userType = "customer" } = req.body;
+        const { name, email, password, userType = "customer" , phone } = req.body;
         console.log({ name, email, password });
         const existingUser = await User.findOne({ where: { email } }); // Use where clause to specify conditions
 
@@ -18,11 +18,12 @@ exports.signup = async (req, res) => {
             username: name,
             email,
             password: hashedPassword,
-            userType
+            userType,
+            phone
         });
         await newUser.save();
 
-        res.status(201).json({ message: 'Signup successful' });
+        res.status(200).json({ message: 'Signup successful' });
     }
     catch (error) {
         console.error(error);
@@ -41,27 +42,27 @@ exports.login = async (req, res) => {
 
             const token = jwt.sign(
                 {
-                    userId: user._id,
+                    userId: user.id,
                     email: user.email,
                     name: user.name,
                     userType: user.userType
                 },
-                process.env.JWT_SECRET, // Replace with a secure secret key
-                { expiresIn: '24h' } // Token expiration time
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
             );
 
             console.log("token", token);
 
             res.status(200).json({
-                message: 'Login successful', data: {
-                    token, user: {
-                        name: user.username,
-                        email: user.email,
-                        userType: user.userType,
-                        userId: user.id,
-
-                    }
+                message: 'Login successful',
+                token, user: {
+                    name: user.username,
+                    email: user.email,
+                    userType: user.userType,
+                    userId: user.id,
+                    phone:user.phone
                 }
+
             });
         } else {
             res.status(401).json({ error: 'Invalid credentials' });

@@ -2,9 +2,10 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.JWT_SECRET; // Replace with your actual secret key
 
-const checkTokenMiddleware = (req, res, next) => {
+ const checkTokenMiddleware = (req, res, next) => {
     const token = req.headers.authorization; 
 
+    // console.log({token});
     if (!token) {
         return res.status(401).json({ message: "Access denied. No token provided." });
     }
@@ -17,12 +18,12 @@ const checkTokenMiddleware = (req, res, next) => {
                 return res.status(401).json({ message: "Invalid token." });
             }
         }
+        // console.log({decoded});
         req.userId = decoded.userId;
         next();
     });
 };
 
-// Middleware function to check if user is an admin
 const checkAdminMiddleware = (req, res, next) => {
     const userType = req.decodedUser.userType;
     if (userType !== 'admin') {
@@ -31,6 +32,5 @@ const checkAdminMiddleware = (req, res, next) => {
     next();
 };
 
-// You can apply these middleware to multiple routes or all routes if needed
-// app.use(checkTokenMiddleware);
-// app.use(checkAdminMiddleware);
+
+module.exports ={ checkAdminMiddleware ,checkTokenMiddleware }
