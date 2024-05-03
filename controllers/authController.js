@@ -8,6 +8,10 @@ exports.signup = async (req, res) => {
     try {
         const { name, email, password, userType = "customer" , phone } = req.body;
         console.log({ name, email, password });
+        if(!name || !name.trim() || !email || !email.trim() || !password || !password.trim() ){
+            res.status(401).json({ error: 'Bad Request' });
+
+        }
         const existingUser = await User.findOne({ where: { email } }); // Use where clause to specify conditions
 
         if (existingUser) {
@@ -36,6 +40,10 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        if(!email || !email.trim() || !password || !password.trim() ){
+            res.status(401).json({ error: 'Bad Request' });
+
+        }
         const user = await User.findOne({ where: { email } }); // Use where clause to specify conditions
         console.log("user", user);
         if (user && bcrypt.compareSync(password, user.password)) {
